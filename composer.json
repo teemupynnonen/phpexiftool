@@ -40,7 +40,7 @@
     "monolog/monolog": "^2.0|^3.0",
     "exiftool/exiftool": "^11",
     "symfony/console": "^6.0",
-    "symfony/process": "^6.0"
+    "symfony/process": "^6.0|^7.0|^8.0"
   },
   "suggest": {
     "jms/serializer": "To serialize tags",
