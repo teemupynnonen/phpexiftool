@@ -69,7 +69,7 @@ class ClassesBuilder extends Command
     /**
      * @see Console\Command\Command
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $start = microtime(true);
 
@@ -87,7 +87,7 @@ class ClassesBuilder extends Command
         $dumper = new InformationDumper(new Exiftool($logger));
 
         $options = array();
-        if($input->getOption('with-mwg')) {
+        if ($input->getOption('with-mwg')) {
             $options[] = InformationDumper::LISTOPTION_MWG;
         }
 
@@ -99,7 +99,7 @@ class ClassesBuilder extends Command
 
         $this->extractDump($dump, $output);
 
-        if ( ! $input->getOption('write')) {
+        if (! $input->getOption('write')) {
             $this->output->writeln(
                 'These classes were not written. Use --write to write on disk'
             );
@@ -115,10 +115,14 @@ class ClassesBuilder extends Command
 
         $this->output->writeln(
             sprintf(
-                '%d classes generated in %d seconds (%d Mb)'
-                , count($this->classes), (microtime(true) - $start), memory_get_peak_usage() >> 20
+                '%d classes generated in %d seconds (%d Mb)',
+                count($this->classes),
+                (microtime(true) - $start),
+                memory_get_peak_usage() >> 20
             )
         );
+
+        return Command::SUCCESS;
     }
 
     /**
@@ -139,14 +143,14 @@ class ClassesBuilder extends Command
 
                 if (strpos($class->getNamespace(), 'PHPExiftool\\Driver\\Tag') === 0) {
 
-                    if ( ! isset($buffer[$class->getProperty('GroupName')])) {
+                    if (! isset($buffer[$class->getProperty('GroupName')])) {
                         $buffer[$class->getProperty('GroupName')] = array();
                     }
 
                     $buffer[$class->getProperty('GroupName')][$class->getProperty('Name')] = $class->getNamespace() . '\\' . $class->getClassname();
                 }
 
-                $this->output->write(sprintf("\rwriting class #%5d", $n ++ ));
+                $this->output->write(sprintf("\rwriting class #%5d", $n++));
             } catch (\Exception $e) {
                 $this->output->writeln(
                     sprintf("\n<error>Error while writing class %s</error>", $class->getPathfile())
@@ -216,13 +220,13 @@ class ClassesBuilder extends Command
             case 'fixed32u':
             case 'var_int16u':
 
-            # Apple data structures in PICT images
+                # Apple data structures in PICT images
             case 'Int8uText':
             case 'Int8u2Text':
             case 'Int16Data':
             case 'Int32uData':
 
-            # Source unknown ...
+                # Source unknown ...
             case 'var_int8u':
             case 'rational':
             case 'integer':
@@ -244,7 +248,7 @@ class ClassesBuilder extends Command
             case 'undef':
             case 'binary':
 
-            # Source unknown ...
+                # Source unknown ...
             case 'var_ue7':
             case 'struct':
             case 'var_undef':
@@ -263,7 +267,7 @@ class ClassesBuilder extends Command
             case 'var_ustr32':
             case 'unicode':
 
-            # Apple data structures in PICT images
+                # Apple data structures in PICT images
             case 'Arc':
             case 'BitsRect#': # version-depended
             case 'BitsRgn#': # version-depended
@@ -280,7 +284,7 @@ class ClassesBuilder extends Command
             case 'Rgn':
             case 'ShortLine':
 
-            # Source unknown ...
+                # Source unknown ...
             case 'lang-alt':
             case 'resize':
             case 'utf8':
@@ -328,7 +332,7 @@ class ClassesBuilder extends Command
 
                         $new_value = array();
 
-                        if ( ! is_array($this->classes[$classpath]->getProperty($property))) {
+                        if (! is_array($this->classes[$classpath]->getProperty($property))) {
                             if (is_array($value)) {
                                 $new_value = $value;
                             }
@@ -459,7 +463,7 @@ class ClassesBuilder extends Command
                     'Type'        => $tag_crawler->attr('type'),
                     'Writable'    => $tag_crawler->attr('writable'),
                     'Description' => $tag_crawler->filter('desc[lang="en"]')->first()->text(),
-                    ), $extra);
+                ), $extra);
 
                 if ($tag_crawler->attr('count')) {
                     $properties['MaxLength'] = $tag_crawler->attr('count');
